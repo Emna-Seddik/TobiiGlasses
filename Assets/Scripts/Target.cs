@@ -38,6 +38,8 @@ namespace TobiiGlasses
 
         string path1 = @"D:/Projet S5/Test1.csv";
         //StreamWriter sw1 = new StreamWrither(path1,true);
+        //StreamReader sr = new StreamReader("C:/tmp/data.txt");
+        StreamReader sr = new StreamReader("C:/tmp/fakeData3.txt");
 
         // Use this for initialization
         void Start()
@@ -51,38 +53,78 @@ namespace TobiiGlasses
             sw = File.CreateText(path);
             //sw1 = File.CreateText(path1);
             // pour csv 
+            Debug.Log("Screan dpi=" + Screen.dpi);
+            Debug.Log("ration=" + Screen.dpi / 25.4f);
 
+        }
+
+        void drawRay(Vector3 position) {
+            Debug.Log("position(" + position.x + ";" + position.y + ";" + position.z + ")");
+            Vector3 mousePosFar = new Vector3(position.x,
+        position.y,
+        Camera.main.farClipPlane);
+            Vector3 mousePosNear = new Vector3(position.x,
+                position.y,
+                Camera.main.nearClipPlane);
+            Vector3 mousePosF = Camera.main.ScreenToWorldPoint(mousePosFar);
+            Vector3 mousePosN = Camera.main.ScreenToWorldPoint(mousePosNear);
+            Debug.DrawRay(mousePosN, mousePosF - mousePosN, Color.cyan);
         }
         void Update()
         {
+            if (Input.GetMouseButton(0)) {
+                drawRay(Input.mousePosition);
+                Debug.Log("Screan dpi=" + Screen.dpi);
+                Debug.Log("ration=" + Screen.dpi / 25.4f);
+            }
 
+            String line = null;
+            try
+            {   // Open the text file using a stream reader.
+                //using (sr)
+                //{
+                    // Read the stream to a string, and write the string to the console.
+                    line = sr.ReadLine();
+                    Debug.Log(line);
+                    Console.WriteLine(line);
+                //}
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
             int screenHeight = Screen.height;
             int screenWidth = Screen.width;
-            Debug.Log("Screen height : " + screenHeight);
+           /* Debug.Log("Screen height : " + screenHeight);
             Debug.Log("Screen Width : " + screenWidth);
 
-            
-            string dataReceiveString = ReceiveData.RData(socketData);
+            Debug.Log("far clip plane  : " + Camera.main.farClipPlane);
+            Debug.Log("near clip plane  : " + Camera.main.nearClipPlane);*/
+
+
+            //string dataReceiveString = ReceiveData.RData(socketData);
+            string dataReceiveString = line;
             //Console.WriteLine("Données reçues"+dataReceiveString);
-            while (!dataReceiveString.Contains("gp3"))
+            while (dataReceiveString==null || !dataReceiveString.Contains("gp3"))
             {
                 dataReceiveString = ReceiveData.RData(socketData);
             }
             SendKeepAliveMessage.SendKAM(ipEndPoint, socketData, socketVideo);
-            if (dataReceiveString.Contains("gp3"))
-            {
+            
                
                 float[] position = new float[3];
                 position = ConvertGP3Data.CData(dataReceiveString);
-                Vector3 vposition = new Vector3(position[0], position[1], position[2]);
+            float ratio = Screen.dpi / 25.4f;  //*scale
+                  Vector3 vposition = new Vector3(position[0], position[1], position[2]);
+                drawRay(vposition*ratio);
 
 
 
-               
 
 
 
-                if (position[1] + position[2] + position[0] != 0)
+            if (position[1] + position[2] + position[0] != 0)
                 {
 
 
@@ -169,7 +211,7 @@ namespace TobiiGlasses
 
 
                    
-                }
+                
                 
             }
         }

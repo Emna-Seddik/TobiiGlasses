@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
+using UnityEngine.UI;
 
 
 
@@ -39,12 +40,15 @@ namespace TobiiGlasses
         string path1 = @"D:/Projet S5/Test1.csv";
         //StreamWriter sw1 = new StreamWrither(path1,true);
         //StreamReader sr = new StreamReader("C:/tmp/data.txt");
-        StreamReader sr = new StreamReader("C:/tmp/fakeData3.txt");
+        //StreamReader sr = new StreamReader("C:/tmp/fakeData3.txt");
+        StreamReader sr = new StreamReader("./Assets/Scripts/JSON/datas/Y0X0bl.json");
+        Text txt ;//= cam.GetComponent<Text>();
+        MainCamera mainCamera; 
 
         // Use this for initialization
         void Start()
         {
-            
+            txt = cam.GetComponent<MainCamera>().text;
             socketData.Connect(ipEndPoint);
             socketVideo.Connect(ipEndPoint);
             SendKeepAliveMessage.SendKAM(ipEndPoint, socketData, socketVideo);
@@ -55,6 +59,13 @@ namespace TobiiGlasses
             // pour csv 
             Debug.Log("Screan dpi=" + Screen.dpi);
             Debug.Log("ration=" + Screen.dpi / 25.4f);
+
+            
+            Debug.Log("Text=" + txt.text);
+
+            
+            txt.text = "that's all folks!";
+            
 
         }
 
@@ -72,6 +83,13 @@ namespace TobiiGlasses
         }
         void Update()
         {
+
+            if (txt == null) {
+                txt = cam.GetComponent<MainCamera>().text;
+            }
+            Debug.Log("Text=" + txt.text);
+            txt.text = "Score : ";
+            Debug.Log("Text=" + txt.text);
             if (Input.GetMouseButton(0)) {
                 drawRay(Input.mousePosition);
                 Debug.Log("Screan dpi=" + Screen.dpi);
@@ -116,8 +134,12 @@ namespace TobiiGlasses
                 float[] position = new float[3];
                 position = ConvertGP3Data.CData(dataReceiveString);
             float ratio = Screen.dpi / 25.4f;  //*scale
-                  Vector3 vposition = new Vector3(position[0], position[1], position[2]);
-                drawRay(vposition*ratio);
+            Vector3 vposition = new Vector3(position[0], position[1], position[2]);
+            txt.text = "(" + position[0] + "," + position[1] + "," + position[2] + ")";
+            vposition = vposition * ratio;
+            Vector3 v1position = new Vector3(-vposition[0]+(screenWidth/2), position[1]+(screenHeight/2), position[2]); ;
+            txt.text = "(" + (int)position[0] + "," + (int)position[1] /*+ "," + (int)position[2] */+ ")";
+                drawRay(v1position);
 
 
 

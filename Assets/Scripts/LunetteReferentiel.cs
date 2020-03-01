@@ -8,7 +8,7 @@ public class LunetteReferentiel : MonoBehaviour
     public Transform lunetteRef;
     public Transform lunetteObj;
 
-    StreamReader stream = new StreamReader("E:\\emna\\datas\\29-02-2020\\lunette.txt");
+    StreamReader stream = new StreamReader("./Assets/mocks/lunette.txt");
 
     // Start is called before the first frame update
     void Start()

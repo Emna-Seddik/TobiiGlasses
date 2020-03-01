@@ -11,8 +11,8 @@ public class Gaze : MonoBehaviour
     [SerializeField] private Material normalMaterial;
     private Transform _selection;
 
-
-    StreamReader stream = new StreamReader("E:\\emna\\datas\\29-02-2020\\gaze.txt");
+    
+    StreamReader stream = new StreamReader("./Assets/mocks/gaze.txt");
 
 
     // Start is called before the first frame update

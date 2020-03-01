@@ -6,7 +6,7 @@ using System.IO;
 public class Ecran : MonoBehaviour
 {
 
-    StreamReader stream = new StreamReader("E:\\emna\\datas\\29-02-2020\\ecran.txt");
+    StreamReader stream = new StreamReader("./Assets/mocks/ecran.txt");
 
     // Start is called before the first frame update
     void Start()

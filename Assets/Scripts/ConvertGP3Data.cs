@@ -1,15 +1,18 @@
 ﻿using System;
-using System.Globalization;
-//using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Globalization;
+using System.Collections.Generic;
+
 
 
 
 namespace TobiiGlasses
 {
+
     public class ConvertGP3Data
     {
 
@@ -30,53 +33,78 @@ namespace TobiiGlasses
         }
         public static float[] CData(string dataReceivedString)
         {
+           
+
             JSONObject jobject = new JSONObject(dataReceivedString);
+            //JSONNode data = JSON.Parse(dataReceivedString);
+            //string json = JsonUtility.ToJson(dataReceivedString);
+            
+            
+            //string x = JsonConvert.serialiseObject(dataReceivedString);
+            
             GazePosition3D gazePosition3D = new GazePosition3D(jobject);
             String coordonnee = gazePosition3D.gp3.Replace("[", "").Replace("]", "").Replace(" ", "");
             string[] stringSeparators = new string[] { "," };
             string[] result = coordonnee.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
-
-            //float.Parse((string)result.GetValue(0), CultureInfo.InvariantCulture);
-            //*((float*)parameter.value) = float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
-
-            //JObject o = JObject.Parse(dataReceivedString);
-
-            //Console.WriteLine(o.ToString());
-
-            JSONObject j = new JSONObject(JSONObject.Type.OBJECT);
-            //Debug.Log(dataReceivedString);
-            //Debug.Log(dataReceivedString.GetType()); // string
-
-            /*int index = dataReceivedString.IndexOf("[");
-            string xyz = dataReceivedString.Substring(index, dataReceivedString.Length-1);
-            Debug.Log(xyz);*/
-
             string[] words = dataReceivedString.Split('[');
             string aaa = words[1].ToString();
             string[] xyz = aaa.Split(']');
-            // xyz[0] contient la chaine suivante "x,y,z"
+            
+
 
 
             string xString = xyz[0].Split(',')[0];
             string yString = xyz[0].Split(',')[1];
             string zString = xyz[0].Split(',')[2];
 
-            //Debug.Log("emnaaaaaaaaaaaa" + zString);
+            //Debug.Log("contenu de string 1" + xyz[0].Split(',')[0]);
+            //Debug.Log("contenu de string 2" + xyz[0].Split(',')[1]);
+            //Debug.Log("contenu de string 3" + xyz[0].Split(',')[2]);
+
+
 
             float x = float.Parse(xString.ToString(), CultureInfo.InvariantCulture);
             float y = float.Parse(yString.ToString(), CultureInfo.InvariantCulture);
             float z = float.Parse(zString.ToString(), CultureInfo.InvariantCulture);
-
-            
-
             //float x = float.Parse("0,0");
             //Console.WriteLine(x);
-            //Console.WriteLine("Detecte Gaze Position 3D " + gp3D + "x"+ xString + "\ny"+ yString + "\nz"+ zString);
+            
             float[] output = new float[3];
             output[0] = x;
             output[1] = y;
             output[2] = z;
             return output;
+        }
+
+        public static Vector3 getValidGP3(string dataReceivedString)
+        {
+
+
+            JSONObject jobject = new JSONObject(dataReceivedString);
+            //Vector3 gaze = null;
+
+            GazePosition3D gazePosition3D = new GazePosition3D(jobject);
+            if (gazePosition3D.s.Equals("0"))
+            {
+
+                String coordonnee = gazePosition3D.gp3.Replace("[", "").Replace("]", "").Replace(" ", "");
+                string[] stringSeparators = new string[] { "," };
+                string[] result = coordonnee.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
+                string[] words = dataReceivedString.Split('[');
+                string aaa = words[1].ToString();
+                string[] xyz = aaa.Split(']');
+                
+                string xString = xyz[0].Split(',')[0];
+                string yString = xyz[0].Split(',')[1];
+                string zString = xyz[0].Split(',')[2];
+                                 
+                float x = float.Parse(xString.ToString(), CultureInfo.InvariantCulture)/1000;
+                float y = float.Parse(yString.ToString(), CultureInfo.InvariantCulture)/1000;
+                float z = float.Parse(zString.ToString(), CultureInfo.InvariantCulture)/1000;
+
+                return new Vector3(x,y,z);
+            }
+            return Vector3.positiveInfinity;
         }
     }
 }

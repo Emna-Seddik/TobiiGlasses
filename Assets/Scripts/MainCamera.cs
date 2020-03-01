@@ -7,7 +7,8 @@ namespace TobiiGlasses
         public Transform target;
         private void Update()
         {
-            //transform.LookAt(target);
+            Vector3 Position = target.transform.position;
+            //transform.LookAt(Position);
         }
     }
 }

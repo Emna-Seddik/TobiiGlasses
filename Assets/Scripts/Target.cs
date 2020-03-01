@@ -18,7 +18,6 @@ namespace TobiiGlasses
     {
 
         public string dataleft;
-        public string mock = @"true";
         public string dataright;
         public Transform target;
         public float smoothTime = 0.3F;
@@ -44,7 +43,6 @@ namespace TobiiGlasses
         StreamReader srl;
         StreamReader srg;
 
-        //string path = @"D:\Amal\donnee2.csv";
 
         StreamWriter swb;
 
@@ -62,51 +60,19 @@ namespace TobiiGlasses
             SendKeepAliveMessage.SendKAM(ipEndPoint, socketData, socketVideo);
             //SendAndReceive();
             objet.transform.position = new Vector3(2, 3, 10);
-            //sw = new StreamWriter(@"D:\Amal\rouge.csv");
+ 
+            if(Utils.mock) {
+                sre = new StreamReader("E:\\emna\\datas\\24-02-2020\\ecran.txt");
+                srl = new StreamReader("E:\\emna\\datas\\24-02-2020\\lunette.txt");
+                srg = new StreamReader("E:\\emna\\datas\\24-02-2020\\gaze1.txt");
+            }
 
-            //swb = new StreamWriter(@"D:\Amal\test17.csv");
-            sre = new StreamReader("E:\\emna\\datas\\24-02-2020\\ecran.txt");
-            srl = new StreamReader("E:\\emna\\datas\\24-02-2020\\lunette.txt");
-            srg = new StreamReader("E:\\emna\\datas\\24-02-2020\\gaze1.txt");
-
-
-            //swn = new StreamWriter(@"D:\Amal\noir.csv");
-            // swr = new StreamWriter(@"D:\Amal\rouge.csv");
-            // swd = new StreamWriter(@"D:\Amal\dorée.csv");
-            // sw = File.CreateText(path);
-            // sw.Write("boule");
-            //sw.Write("Xboule"+ "; " + " Xregard" + "\r");
-            //swb.Write("" + "; " + "Yboule"+ ";"+ "Zboule" + ";" + " Xregard" + ";" + "Yregard"+ "; " + "Zregard" + "\r");
-
-            //sw.Write("2");
-            //sw.Flush();
-
-            //before your loop
-            //var csv = new StringBuilder();
-
-            //in your loop
-            //string first = "boule";
-            //string second = "regard";
-            //Suggestion made by KyleMit
-            // var newLine = string.Format("{0},{1}", first, second);
-            // csv.AppendLine(newLine);
-
-            //after your loop
-            // File.WriteAllText(@"D:\Amal\donnee2.csv", csv.ToString());
-            //swb.Flush();
-
-            // FileStream file = File.Create(Application.persistentDataPath + "/donnee1.csv");
-
-            //markerLunette.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            //markerLunette.transform.gameObject- = new Vector3(1f, 1f, 1f);
-            //markerLunette.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
         }
 
 
         void drawRay(Vector3 position)
         {
-            //Debug.Log("position(" + position.x + ";" + position.y + ";" + position.z + ")");
             Vector3 mousePosFar = new Vector3(position.x,
                                               position.y,
                                               Camera.main.farClipPlane);
@@ -115,7 +81,6 @@ namespace TobiiGlasses
                                                Camera.main.nearClipPlane);
             Vector3 mousePosF = Camera.main.ScreenToWorldPoint(mousePosFar);
             Vector3 mousePosN = Camera.main.ScreenToWorldPoint(mousePosNear);
-            //Debug.DrawRay(mousePosN, mousePosF - mousePosN, Color.cyan);
         }
 
 
@@ -125,7 +90,7 @@ namespace TobiiGlasses
         {
             Debug.Log(Time.time + ":OHOOOOHHH");
             Console.WriteLine(Time.time + ":OHOOOOHHH BARRAH");
-            if (mock.Equals("true"))
+            if (Utils.mock)
             {
 
                 String lineE = null;

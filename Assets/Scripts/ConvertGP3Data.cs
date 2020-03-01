@@ -33,8 +33,8 @@ namespace TobiiGlasses
         }
         public static float[] CData(string dataReceivedString)
         {
-           
 
+            Debug.Log("dataReceiver"+dataReceivedString);
             JSONObject jobject = new JSONObject(dataReceivedString);
             //JSONNode data = JSON.Parse(dataReceivedString);
             //string json = JsonUtility.ToJson(dataReceivedString);
@@ -74,37 +74,6 @@ namespace TobiiGlasses
             output[1] = y;
             output[2] = z;
             return output;
-        }
-
-        public static Vector3 getValidGP3(string dataReceivedString)
-        {
-
-
-            JSONObject jobject = new JSONObject(dataReceivedString);
-            //Vector3 gaze = null;
-
-            GazePosition3D gazePosition3D = new GazePosition3D(jobject);
-            if (gazePosition3D.s.Equals("0"))
-            {
-
-                String coordonnee = gazePosition3D.gp3.Replace("[", "").Replace("]", "").Replace(" ", "");
-                string[] stringSeparators = new string[] { "," };
-                string[] result = coordonnee.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
-                string[] words = dataReceivedString.Split('[');
-                string aaa = words[1].ToString();
-                string[] xyz = aaa.Split(']');
-                
-                string xString = xyz[0].Split(',')[0];
-                string yString = xyz[0].Split(',')[1];
-                string zString = xyz[0].Split(',')[2];
-                                 
-                float x = float.Parse(xString.ToString(), CultureInfo.InvariantCulture)/1000;
-                float y = float.Parse(yString.ToString(), CultureInfo.InvariantCulture)/1000;
-                float z = float.Parse(zString.ToString(), CultureInfo.InvariantCulture)/1000;
-
-                return new Vector3(x,y,z);
-            }
-            return Vector3.positiveInfinity;
         }
     }
 }

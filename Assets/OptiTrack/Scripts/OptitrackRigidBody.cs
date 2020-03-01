@@ -62,7 +62,9 @@ public class OptitrackRigidBody : MonoBehaviour
         if ( rbState != null )
         {
             this.transform.localPosition = rbState.Pose.Position;
+            //Debug.Log("rb state pose position " + rbState.Pose.Position);
             this.transform.localRotation = rbState.Pose.Orientation;
+            //Debug.Log("rb state pose orientations " + rbState.Pose.Orientation);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace TobiiGlasses
             Vector3 gazePosition = Vector3.zero;
             float[] gp3 = new float[3];
             dataReceiveString = ReceiveData.RData(socketData);
-            Debug.Log(dataReceiveString);
+            
             SendKeepAliveMessage.SendKAM(ipEndPoint, socketData, socketVideo);
             while (!dataReceiveString.Contains("gp3"))
             {
@@ -75,7 +75,8 @@ namespace TobiiGlasses
                 if (dataReceiveString.Contains("gp3"))
                 {
                     gp3 = ConvertGP3Data.CData(dataReceiveString);
-                    gazePosition = new Vector3(-gp3[0], gp3[1], gp3[2]);
+                    gazePosition = new Vector3(-gp3[0]/1000, gp3[1]/1000, gp3[2]/1000);
+                    Debug.Log(dataReceiveString);
                 }
             }
 

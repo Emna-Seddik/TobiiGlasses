@@ -27,6 +27,11 @@ namespace TobiiGlasses
 
         string dataReceiveString;
 
+        StreamWriter swReality, swExpected;
+        Vector3 mTopLeft = new Vector3(1.31474f,1.1847f,1.24651f);
+        Vector3 mTopRight = new Vector3(1.29703f, 1.18625f, 0.70979f);
+        Vector3 mBottomLeft = new Vector3(1.31929f, 0.84442f, 1.24656f);
+        Vector3 mBottomRight = new Vector3(1.3026f, 0.84673f, 0.97792f);
 
         // Start is called before the first frame update
         void Start()
@@ -39,7 +44,10 @@ namespace TobiiGlasses
             {
                 stream = new StreamReader("./Assets/mocks/gaze.txt");
             }
-            
+
+            swReality = new StreamWriter(@"C:\Users\EyeTracking\Documents\GitHub\TopLeftReality.csv");
+            swExpected = new StreamWriter(@"C:\Users\EyeTracking\Documents\GitHub\TopLeftExpected.csv");
+
         }
 
         // Update is called once per frame
@@ -74,16 +82,19 @@ namespace TobiiGlasses
                 // get gaze position from tobii ^^'
                 if (dataReceiveString.Contains("gp3"))
                 {
-                    gp3 = ConvertGP3Data.CData(dataReceiveString);
-                    gazePosition = new Vector3(-gp3[0]/1000, gp3[1]/1000, gp3[2]/1000);
-                    if((Mathf.Abs(gp3[0])<15f) && (Mathf.Abs(gp3[1]) < 15f))
+                    
+                    Vector3 gazeV = ConvertGP3Data.getValidGP3(dataReceiveString);
+                    gazePosition = new Vector3(-gazeV.x, gazeV.y, gazeV.z);
+                    
+                    //gazePosition = new Vector3(-gp3[0]/1000, gp3[1]/1000, gp3[2]/1000);
+                    if ((Mathf.Abs(gp3[0])<15f) && (Mathf.Abs(gp3[1]) < 15f))
                     {
                         Debug.Log("Gaze Position x= " + gazePosition.x);
                         Debug.Log("Gaze Position y= " + gazePosition.y);
                         Debug.Log("Rotation de GazeRef =" + this.transform.parent.rotation.eulerAngles);
                         Application.Quit();
                     }
-                    Debug.Log(dataReceiveString);
+                                        
                 }
             }
 
@@ -92,6 +103,11 @@ namespace TobiiGlasses
             // make the gaze bject look forrward
             //TODO : verify ths line
             this.transform.LookAt(2 * this.transform.position - this.transform.parent.position);
+            swReality.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
+            swReality.Flush();
+            this.transform.parent.LookAt(mTopLeft);
+            swExpected.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
+            swExpected.Flush();
 
 
             if (_selection != null)

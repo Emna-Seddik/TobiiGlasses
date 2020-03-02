@@ -41,6 +41,7 @@ namespace TobiiGlasses
                 string[] strings = line.Split(';');
                 this.transform.position = new Vector3(float.Parse(strings[0]), float.Parse(strings[1]), float.Parse(strings[2]));
                 this.transform.rotation = new Quaternion(float.Parse(strings[3]), float.Parse(strings[4]), float.Parse(strings[5]), float.Parse(strings[6]));
+                
             }
 
         }

@@ -76,6 +76,13 @@ namespace TobiiGlasses
                 {
                     gp3 = ConvertGP3Data.CData(dataReceiveString);
                     gazePosition = new Vector3(-gp3[0]/1000, gp3[1]/1000, gp3[2]/1000);
+                    if((Mathf.Abs(gp3[0])<15f) && (Mathf.Abs(gp3[1]) < 15f))
+                    {
+                        Debug.Log("Gaze Position x= " + gazePosition.x);
+                        Debug.Log("Gaze Position y= " + gazePosition.y);
+                        Debug.Log("Rotation de GazeRef =" + this.transform.parent.rotation.eulerAngles);
+                        Application.Quit();
+                    }
                     Debug.Log(dataReceiveString);
                 }
             }

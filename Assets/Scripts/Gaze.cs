@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Globalization;
 using TobiiGlasses;
+using System.Net;
+using System.Net.Sockets;
 
 
 namespace TobiiGlasses
@@ -16,21 +19,44 @@ namespace TobiiGlasses
 
 
         StreamReader stream ;
+        static int liveCtrlPort = 49152;
+        static IPAddress ipGlasses = IPAddress.Parse("192.168.71.50");
+        static IPEndPoint ipEndPoint = new IPEndPoint(ipGlasses, liveCtrlPort);
+        static Socket socketData = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        static Socket socketVideo = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+        string dataReceiveString;
 
 
         // Start is called before the first frame update
         void Start()
         {
+
+            socketData.Connect(ipEndPoint);
+            socketVideo.Connect(ipEndPoint);
+            SendKeepAliveMessage.SendKAM(ipEndPoint, socketData, socketVideo);
             if (Utils.mock)
             {
                 stream = new StreamReader("./Assets/mocks/gaze.txt");
             }
+            
         }
 
         // Update is called once per frame
         void Update()
         {
+            
             Vector3 gazePosition = Vector3.zero;
+            float[] gp3 = new float[3];
+            dataReceiveString = ReceiveData.RData(socketData);
+            Debug.Log(dataReceiveString);
+            SendKeepAliveMessage.SendKAM(ipEndPoint, socketData, socketVideo);
+            while (!dataReceiveString.Contains("gp3"))
+            {
+                dataReceiveString = ReceiveData.RData(socketData);
+                
+            }
+
             if (Utils.mock)
             {
                 string line = null;
@@ -46,7 +72,11 @@ namespace TobiiGlasses
             } else
             {
                 // get gaze position from tobii ^^'
-
+                if (dataReceiveString.Contains("gp3"))
+                {
+                    gp3 = ConvertGP3Data.CData(dataReceiveString);
+                    gazePosition = new Vector3(-gp3[0], gp3[1], gp3[2]);
+                }
             }
 
             this.transform.localPosition = gazePosition;

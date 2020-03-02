@@ -13,6 +13,7 @@ namespace TobiiGlasses
             socketData.Receive(dataReceivedBytes);
             string dataReceivedString = Encoding.ASCII.GetString(dataReceivedBytes);
             //string dataReceivedString = Encoding.UTF8.GetString(dataReceivedBytes);
+            
             return dataReceivedString;
         }
     }

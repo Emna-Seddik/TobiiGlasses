@@ -6,7 +6,7 @@ namespace TobiiGlasses
 {
     public class Utils 
     {
-        public static bool mock = false;
+        public static bool mock = true;
 
     }
 }

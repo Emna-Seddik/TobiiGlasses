@@ -32,6 +32,8 @@ namespace TobiiGlasses
         Vector3 mTopRight = new Vector3(1.29703f, 1.18625f, 0.70979f);
         Vector3 mBottomLeft = new Vector3(1.31929f, 0.84442f, 1.24656f);
         Vector3 mBottomRight = new Vector3(1.3026f, 0.84673f, 0.97792f);
+        Vector3 mCenter = new Vector3(1.301899f , 1.017719f , 0.9737017f);
+        
 
         // Start is called before the first frame update
         void Start()
@@ -55,15 +57,7 @@ namespace TobiiGlasses
         {
             
             Vector3 gazePosition = Vector3.zero;
-            float[] gp3 = new float[3];
-            dataReceiveString = ReceiveData.RData(socketData);
             
-            SendKeepAliveMessage.SendKAM(ipEndPoint, socketData, socketVideo);
-            while (!dataReceiveString.Contains("gp3"))
-            {
-                dataReceiveString = ReceiveData.RData(socketData);
-                
-            }
 
             if (Utils.mock)
             {
@@ -79,6 +73,15 @@ namespace TobiiGlasses
                 gazePosition = new Vector3(-gazeV.x, gazeV.y, gazeV.z);
             } else
             {
+                float[] gp3 = new float[3];
+                dataReceiveString = ReceiveData.RData(socketData);
+
+                SendKeepAliveMessage.SendKAM(ipEndPoint, socketData, socketVideo);
+                while (!dataReceiveString.Contains("gp3"))
+                {
+                    dataReceiveString = ReceiveData.RData(socketData);
+
+                }
                 // get gaze position from tobii ^^'
                 if (dataReceiveString.Contains("gp3"))
                 {
@@ -103,11 +106,11 @@ namespace TobiiGlasses
             // make the gaze bject look forrward
             //TODO : verify ths line
             this.transform.LookAt(2 * this.transform.position - this.transform.parent.position);
-            swReality.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
-            swReality.Flush();
-            this.transform.parent.LookAt(mTopLeft);
-            swExpected.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
-            swExpected.Flush();
+            //swReality.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
+            //swReality.Flush();
+            this.transform.parent.LookAt(mCenter);
+            //swExpected.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
+            //swExpected.Flush();
 
 
             if (_selection != null)
@@ -133,7 +136,8 @@ namespace TobiiGlasses
 
                 if (hit.collider != null)
                 {
-                    // hit.collider.
+                     
+                        Debug.Log("hit point :"+ hit.point);
                 }
                 Debug.DrawRay(transform.parent.position, this.transform.forward * hit.distance * 10, Color.green);
                 //Debug.DrawRay(transform.parent.position, this.transform.forward * , Color.green);

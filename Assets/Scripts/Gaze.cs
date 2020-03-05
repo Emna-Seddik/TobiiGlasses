@@ -13,6 +13,7 @@ namespace TobiiGlasses
     public class Gaze : MonoBehaviour
     {
         [SerializeField] private LayerMask screenLayer;
+        [SerializeField] private LayerMask droneLayer;
         [SerializeField] private Material highlightedMaterial;
         [SerializeField] private Material normalMaterial;
         private Transform _selection;
@@ -28,11 +29,11 @@ namespace TobiiGlasses
         string dataReceiveString;
 
         StreamWriter swReality, swExpected;
-        Vector3 mTopLeft = new Vector3(1.31474f,1.1847f,1.24651f);
-        Vector3 mTopRight = new Vector3(1.29703f, 1.18625f, 0.70979f);
-        Vector3 mBottomLeft = new Vector3(1.31929f, 0.84442f, 1.24656f);
-        Vector3 mBottomRight = new Vector3(1.3026f, 0.84673f, 0.97792f);
-        Vector3 mCenter = new Vector3(1.301899f , 1.017719f , 0.9737017f);
+        Vector3 mTopLeft = new Vector3(1.31493f,1.18472f,1.24666f);
+        Vector3 mTopRight = new Vector3(1.2978f, 1.18611f, 0.70993f);
+        Vector3 mBottomLeft = new Vector3(1.31939f, 0.8445f, 1.24694f);
+        Vector3 mBottomRight = new Vector3(1.30398f, 0.8466f, 0.70911f);
+        Vector3 mCenter = new Vector3(1.309f , 1.0155f, 0.97815f);
         
 
         // Start is called before the first frame update
@@ -85,11 +86,12 @@ namespace TobiiGlasses
                 // get gaze position from tobii ^^'
                 if (dataReceiveString.Contains("gp3"))
                 {
-                    
+                    Debug.Log(dataReceiveString);
                     Vector3 gazeV = ConvertGP3Data.getValidGP3(dataReceiveString);
                     gazePosition = new Vector3(-gazeV.x, gazeV.y, gazeV.z);
-                    
+
                     //gazePosition = new Vector3(-gp3[0]/1000, gp3[1]/1000, gp3[2]/1000);
+                    //this.transform.parent.LookAt(mCenter);
                     if ((Mathf.Abs(gp3[0])<15f) && (Mathf.Abs(gp3[1]) < 15f))
                     {
                         Debug.Log("Gaze Position x= " + gazePosition.x);
@@ -108,7 +110,7 @@ namespace TobiiGlasses
             this.transform.LookAt(2 * this.transform.position - this.transform.parent.position);
             //swReality.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
             //swReality.Flush();
-            this.transform.parent.LookAt(mCenter);
+            //this.transform.parent.LookAt(mCenter);
             //swExpected.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
             //swExpected.Flush();
 
@@ -122,11 +124,12 @@ namespace TobiiGlasses
                     _selection = null;
                 }
             }
-            RaycastHit hit;
+            RaycastHit hitEcran;
+            RaycastHit hitDrone;
             // Does the ray intersect any objects 
-            if (Physics.Raycast(transform.parent.position, this.transform.forward, out hit, Mathf.Infinity, screenLayer))
+            if (Physics.Raycast(transform.parent.position, this.transform.forward, out hitEcran, Mathf.Infinity, screenLayer))
             {
-                var selection = hit.transform;
+                var selection = hitEcran.transform;
                 var selectionRenderer = selection.GetComponent<Renderer>();
                 if (selectionRenderer != null)
                 {
@@ -134,12 +137,12 @@ namespace TobiiGlasses
                     _selection = selection;
                 }
 
-                if (hit.collider != null)
+                if (hitEcran.collider != null)
                 {
                      
-                        Debug.Log("hit point :"+ hit.point);
+                        Debug.Log("hit point :"+ hitEcran.point);
                 }
-                Debug.DrawRay(transform.parent.position, this.transform.forward * hit.distance * 10, Color.green);
+                Debug.DrawRay(transform.parent.position, this.transform.forward * hitEcran.distance * 10, Color.green);
                 //Debug.DrawRay(transform.parent.position, this.transform.forward * , Color.green);
                 Debug.Log("Did Hit");
             }
@@ -148,7 +151,32 @@ namespace TobiiGlasses
                 Debug.DrawRay(transform.parent.position, this.transform.forward * 1000, Color.white);
                 Debug.Log("Did not Hit");
             }
-            
+
+            //does the ray intersect drones
+            if (Physics.Raycast(transform.parent.position, this.transform.forward, out hitDrone, Mathf.Infinity, droneLayer))
+            {
+                var selection = hitDrone.transform;
+                var selectionRenderer = selection.GetComponent<Renderer>();
+                if (selectionRenderer != null)
+                {
+                    selectionRenderer.material = highlightedMaterial;
+                    _selection = selection;
+                }
+
+                if (hitDrone.collider != null)
+                {
+
+                    Debug.Log("hit point :" + hitDrone.point);
+                }
+                Debug.DrawRay(transform.parent.position, this.transform.forward * hitDrone.distance * 10, Color.green);
+                //Debug.DrawRay(transform.parent.position, this.transform.forward * , Color.green);
+                Debug.Log("Did Hit");
+            }
+            else
+            {
+                Debug.DrawRay(transform.parent.position, this.transform.forward * 1000, Color.white);
+                Debug.Log("Did not Hit");
+            }
 
         }
     }

@@ -28,11 +28,11 @@ namespace TobiiGlasses
 
         string dataReceiveString;
 
-        StreamWriter swReality, swExpected;
-        Vector3 mTopLeft = new Vector3(1.31493f,1.18472f,1.24666f);
-        Vector3 mTopRight = new Vector3(1.2978f, 1.18611f, 0.70993f);
+        StreamWriter swReality, swExpected, topLeftFile,topRightFile, bottomLeftFile,bottomRightFile;
+        Vector3 mTopLeft = new Vector3(1.3156f,1.18569f,1.24492f);
+        Vector3 mTopRight = new Vector3(1.30179f, 1.18901f, 0.70849f);
         Vector3 mBottomLeft = new Vector3(1.31939f, 0.8445f, 1.24694f);
-        Vector3 mBottomRight = new Vector3(1.30398f, 0.8466f, 0.70911f);
+        Vector3 mBottomRight = new Vector3(1.30525f, 0.8466f, 0.70845f);
         Vector3 mCenter = new Vector3(1.309f , 1.0155f, 0.97815f);
         
 
@@ -50,6 +50,22 @@ namespace TobiiGlasses
 
             swReality = new StreamWriter(@"C:\Users\EyeTracking\Documents\GitHub\TopLeftReality.csv");
             swExpected = new StreamWriter(@"C:\Users\EyeTracking\Documents\GitHub\TopLeftExpected.csv");
+
+
+            topLeftFile = new StreamWriter(@"C:\Users\EyeTracking\Documents\GitHub\topLeftFile.csv");
+            topLeftFile.Write("euler Angles reality " + ";" + "euler Angles expected" + ";" + "Error rate" + "\r\n");
+            topLeftFile.Flush();
+
+            //ecran
+            topRightFile = new StreamWriter(@"C:\Users\EyeTracking\Documents\GitHub\topRightFile.csv");
+            topRightFile.Write("euler Angles reality " + ";" + "euler Angles expected" + ";" + "Error rate" + "\r\n");
+            topRightFile.Flush();
+            bottomLeftFile = new StreamWriter(@"C:\Users\EyeTracking\Documents\GitHub\bottomLeftFile.csv");
+            bottomLeftFile.Write("euler Angles reality " + ";" + "euler Angles expected" + ";" + "Error rate" + "\r\n");
+            bottomLeftFile.Flush();
+            bottomRightFile = new StreamWriter(@"C:\Users\EyeTracking\Documents\GitHub\bottomRightFile.csv");
+            bottomRightFile.Write("euler Angles reality " + ";" + "euler Angles expected" + ";" + "Error rate" + "\r\n");
+            bottomRightFile.Flush();
 
         }
 
@@ -113,6 +129,26 @@ namespace TobiiGlasses
             //this.transform.parent.LookAt(mCenter);
             //swExpected.Write(gazePosition.x + ";" + gazePosition.y + ";" + gazePosition.z + ";" + this.transform.parent.rotation.eulerAngles.x + ";" + this.transform.parent.rotation.eulerAngles.y + ";" + this.transform.parent.rotation.eulerAngles.z + "\r\n");
             //swExpected.Flush();
+
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                remplir(topLeftFile,mTopLeft);
+            }
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                remplir(topRightFile, mTopRight);
+            }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                remplir(bottomLeftFile, mBottomLeft);
+            }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                remplir(bottomRightFile, mBottomRight);
+            }
+
+
+
 
 
             if (_selection != null)
@@ -178,6 +214,29 @@ namespace TobiiGlasses
                 Debug.Log("Did not Hit");
             }
 
+        }
+        public void remplir(StreamWriter file, Vector3 position )
+        {
+            float angleRealityX = this.transform.parent.rotation.eulerAngles.x;
+            float angleRealityY = this.transform.parent.rotation.eulerAngles.y;
+            float angleRealityZ = this.transform.parent.rotation.eulerAngles.z;
+            
+            this.transform.parent.LookAt(position);
+            float angleExpectedX = this.transform.parent.rotation.eulerAngles.x;
+            float angleExpectedY = this.transform.parent.rotation.eulerAngles.y;
+            float angleExpectedZ = this.transform.parent.rotation.eulerAngles.z;
+
+            float deltaX = angleRealityX - angleExpectedX;
+            float deltaY = angleRealityY - angleExpectedY;
+            float deltaZ = angleRealityZ - angleExpectedZ;
+
+
+            file.Write("(" + angleRealityX + "," + angleRealityY + "," + angleRealityZ + ")" + ";" 
+                     + "(" + this.transform.parent.rotation.eulerAngles.x + "," + this.transform.parent.rotation.eulerAngles.y + "," + this.transform.parent.rotation.eulerAngles.z + ")" + ";" 
+                     + "("+ deltaX +"," + deltaY+","+ deltaZ+")"+"\r\n");
+
+
+            file.Flush();
         }
     }
 }
